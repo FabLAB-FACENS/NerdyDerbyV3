@@ -51,7 +51,7 @@ export default function Home() {
   }}
   resizeMode="stretch"
   imageStyle={{
-    resizeMode: 'stretch',
+    resizeMode: 'stretch'
   }}
 >
   

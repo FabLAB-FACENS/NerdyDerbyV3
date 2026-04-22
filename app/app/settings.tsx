@@ -49,7 +49,7 @@ export default function Settings() {
 >
   <Image
     source={require('../assets/images/Botao__Voltar.png')}
-     style={{ width: 225, height: 100, bottom: -475, left: -725, position: 'absolute'}}
+     style={{ width: 200, height: 100, bottom: -475, left: -725, position: 'absolute'}}
       resizeMode='contain'
   />
   
