@@ -6,6 +6,7 @@ import LogoNerdyDerby from '../assets/images/Logo_Nerdy_Derby.svg';
 import LogoFabLab from '../assets/images/Logo_Fab_LAB_Uni_Facens.svg';
 
 export default function Settings() {
+  const [statusESP, setStatusESP] = useState<'desligado' | 'atualizando' | 'ligado'>('desligado');
   const { width, height } = useWindowDimensions();
 
   const logoSize  = width * 0.03;
@@ -32,6 +33,11 @@ export default function Settings() {
           <LogoNerdyDerby width={logoSize} height={logoSize} />
         </View>
 
+        {/* Títulos: Chegada / GIF / Largada */}
+        
+
+        {/* Status dos ESPs */}
+        
 
         {/* Logo FabLab — canto inferior direito */}
         <View style={styles.fabLabContainer}>
@@ -49,19 +55,8 @@ export default function Settings() {
   </TouchableOpacity>
 </View>
 
-{/* BOTÃO ATUALIZAR — centro inferior */}
-<View style={styles.botaoAtualizarContainer}>
-  <TouchableOpacity 
-  onPress={() => router.push('../circuitos.tsx')}
-  >
+
   
-    <Image
-      source={require('../assets/images/Atualizar.png')}
-      style={{ width: btnAtualizarW, height: btnAtualizarH }}
-      resizeMode="contain"
-    />
-  </TouchableOpacity>
-  </View>
         
       </ImageBackground>
     </View>
@@ -107,11 +102,7 @@ const styles = StyleSheet.create({
   bottom: 24,
   left: 28,
 },
-botaoAtualizarContainer: {
-  position: 'absolute',
-  bottom: 24,
-  alignSelf: 'center',
-},
+
 
 
 
