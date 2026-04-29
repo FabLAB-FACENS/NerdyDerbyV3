@@ -1,194 +1,166 @@
-import { router, usePathname,Stack} from 'expo-router'
-import { useEffect, useState } from 'react'
-import { Button, Text, View, Image, ImageBackground, TouchableOpacity} from 'react-native'
+import { router, Stack } from 'expo-router';
+import { useState } from 'react';
+import { View, Image, ImageBackground, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
+
+import LogoNerdyDerby from '../assets/images/Logo_Nerdy_Derby.svg';
+import LogoFabLab from '../assets/images/Logo_Fab_LAB_Uni_Facens.svg';
 
 export default function Settings() {
-  const [statusESP, setStatusESP] = useState<'desligado' | 'atualizando' | 'ligado'>('desligado')
+  const [statusESP, setStatusESP] = useState<'desligado' | 'atualizando' | 'ligado'>('desligado');
+  const { width, height } = useWindowDimensions();
+
+  const logoSize  = width * 0.03;
+  const statusW   = width * 0.25;
+  const statusH   = statusW * 0.70;
+  const gifW      = width * 0.30;
+  const titleW    = width * 0.25;
+  const fabLabW   = width * 0.10;
+  const fabLabH   = fabLabW * 0.3;
+  const btnW      = width * 0.15;
+  const btnH      = btnW * 0.35;
+  const btnAtualizarW = width * 0.25; 
+const btnAtualizarH = btnAtualizarW * 0.55;
 
   const atualizarESP = async () => {
-    setStatusESP('atualizando')
+  setStatusESP('atualizando');
 
-    try {
-      const controller = new AbortController()
+  try {
+    const controller = new AbortController();
 
-      const timeout = setTimeout(() => {
-        controller.abort()
-      }, 3000)
+    const timeout = setTimeout(() => controller.abort(), 4000);
 
-      // 🔴 TROQUE PELO IP DO SEU ESP
-      const response = await fetch('http://192.168.0.100/status', {
-        signal: controller.signal
-      })
+    const fetchPromise = fetch('http://192.168.0.100/status', {
+      signal: controller.signal
+    });
 
-      clearTimeout(timeout)
+    // 🔥 roda os dois ao mesmo tempo
+    const [response] = await Promise.all([
+      fetchPromise,
+      delay(3000) // 👈 garante 3 segundos
+    ]);
 
-      if (response.ok) {
-        setStatusESP('ligado')
-      } else {
-        setStatusESP('desligado')
-      }
+    clearTimeout(timeout);
 
-    } catch (error) {
-      setStatusESP('desligado')
-    }
+    setStatusESP(response.ok ? 'ligado' : 'desligado');
+
+  } catch {
+    setStatusESP('desligado');
   }
+};
+  const statusImage =
+    statusESP === 'atualizando'
+      ? require('../assets/images/ESP-Status-Atualizando.png')
+      : statusESP === 'ligado'
+      ? require('../assets/images/ESP-Status-Ligado.png')
+      : require('../assets/images/ESP-Status-Desligado.png');
+
+  const gifImage =
+    statusESP === 'atualizando'
+      ? require('../assets/images/GIF-Status-Atualizando.png')
+      : require('../assets/images/GIF-Status-Desligado.png');
 
   return (
-    <View style={{ flex: 1 }}>
-        {/* Esta linha abaixo remove o cabeçalho "index" */}
-        <Stack.Screen options={{ headerShown: false }} />
-     <View style={{ flex: 1}}>
+    <View style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }} />
 
+      <ImageBackground
+        source={require('../assets/images/Fundo_Tela.png')}
+        style={styles.background}
+        resizeMode="stretch"
+      >
+        {/* Logo principal */}
+        <View style={styles.logoContainer}>
+          <LogoNerdyDerby width={logoSize} height={logoSize} />
+        </View>
 
- <ImageBackground
-  source={require('../assets/images/Fundo_Tela.png')}
-  style={{
+        {/* Títulos: Chegada / GIF / Largada */}
+        <View style={styles.titlesRow}>
+          <Image source={require('../assets/images/Chegada.png')} style={{ width: titleW, height: 40 }} resizeMode="contain" />
+          <Image source={require('../assets/images/GIF.png')} style={{ width: titleW, height: 35 }} resizeMode="contain" />
+          <Image source={require('../assets/images/Largada.png')} style={{ width: titleW, height: 40 }} resizeMode="contain" />
+        </View>
+
+        {/* Status dos ESPs */}
+        <View style={styles.statusRow}>
+          <Image source={statusImage} style={{ width: statusW, height: statusH }} resizeMode="contain" />
+          <Image source={gifImage}    style={{ width: gifW,    height: statusH }} resizeMode="contain" />
+          <Image source={statusImage} style={{ width: statusW, height: statusH }} resizeMode="contain" />
+        </View>
+
+        {/* Logo FabLab — canto inferior direito */}
+        <View style={styles.fabLabContainer}>
+          <LogoFabLab width={fabLabW} height={fabLabH} />
+        </View>
+
+        {/* BOTÃO VOLTAR — canto inferior esquerdo */}
+<View style={styles.botaoVoltarContainer}>
+  <TouchableOpacity onPress={() => router.back()}>
+    <Image
+      source={require('../assets/images/Botao__Voltar.png')}
+      style={{ width: btnW, height: btnH }}
+      resizeMode="contain"
+    />
+  </TouchableOpacity>
+</View>
+
+{/* BOTÃO ATUALIZAR — centro inferior */}
+<View style={styles.botaoAtualizarContainer}>
+  <TouchableOpacity onPress={atualizarESP}>
+    <Image
+      source={require('../assets/images/Atualizar.png')}
+      style={{ width: btnAtualizarW, height: btnAtualizarH }}
+      resizeMode="contain"
+    />
+  </TouchableOpacity>
+        </View>
+      </ImageBackground>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  background: {
     flex: 1,
     width: '100%',
     height: '100%',
-  }}
-  resizeMode="stretch"
-  imageStyle={{
-    resizeMode: 'stretch',
-  }}
->
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    
-    <Image
-      source={require('../assets/images/Logo_Nerdy_Derby.svg')}
-      style={{ width: 50, height: 350, marginTop: -600, position: 'absoulute'}}
-      resizeMode='contain'
-      
-    />
-  
-    <Image
-      source={require('../assets/images/Logo_Fab_LAB_Uni_Facens.svg')}
-      style={{ width: 150, height: 100, bottom: 20, right: 75, position: 'absolute'}}
-      resizeMode='contain'
-      
-    />
-   
-   
-    {/*titulos*/}
-    <View style={{  flexDirection: 'row', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    
-    }}>
- 
-     <Image
-      source={require('../assets/images/Chegada.png')}
-       style={{ width: 200, height: 40,left: -600,  marginTop:-180,position:'absolute'}}
-    resizeMode='contain'
-    />
-    
-     <Image
-      source={require('../assets/images/GIF.png')}
-       style={{ width: 200, height: 30, marginTop:-190, position:'absolute'}}
-    resizeMode='contain'
-    />
-    <Image
-      source={require('../assets/images/Largada.png')}
-       style={{ width: 200, height: 40, right: -600, marginTop:-190, position:'absolute'}}
-    resizeMode='contain'
-    />
-    
-    
-    {/*status*/}
-    <View style={{  flexDirection: 'row', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    }}>
-      <Image
-      source={statusESP === 'desligado'
-                ? require('../assets/images/ESP-Status-Desligado.png')
-                : statusESP === 'atualizando'
-                ? require('../assets/images/ESP-Status-Atualizando.png')
-                : require('../assets/images/ESP-Status-Ligado.png')
-      }
-       style={{ width: 350, height:300, right: 325, marginTop:130, position:'absolute'}}
-    resizeMode='contain'
-    />
-
-     <Image
-      source={statusESP === 'atualizando'
-                ? require('../assets/images/GIF-Status-Atualizando.png')
-                : require('../assets/images/GIF-Status-Desligado.png')
-            }
-       style={{ width: 340, height: 300,  marginTop:130, position:'absolute'}}
-    resizeMode='contain'
-    />
-
-    <Image
-      source={statusESP === 'desligado'
-                ? require('../assets/images/ESP-Status-Desligado.png')
-                : statusESP === 'atualizando'
-                ? require('../assets/images/ESP-Status-Atualizando.png')
-                : require('../assets/images/ESP-Status-Ligado.png')
-            }
-       style={{ width: 350, height: 300, left: 325, marginTop:130, position:'absolute'}}
-    resizeMode='contain'
-    />
-
-    
-
-      
-   
-   <View style={{  flexDirection: 'row', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    
-    }}>
-
-<TouchableOpacity
-  onPress={() => router.back()}
-  style={{
-    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    
-   
-  }}
->
-  <Image
-    source={require('../assets/images/Botao__Voltar.png')}
-     style={{ width: 200, height: 100, bottom: -475, left: -725, position: 'absolute'}}
-      resizeMode='contain'
-  />
-  
-</TouchableOpacity>
+    gap: 24,
+    paddingVertical: 32,
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginTop: -225,
+  },
+  titlesRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '90%',
+  },
+  statusRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '90%',
+  },
+  fabLabContainer: {
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+  },
+ botaoVoltarContainer: {
+  position: 'absolute',
+  bottom: 24,
+  left: 28,
+},
 
- <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-  
-  <TouchableOpacity
-   onPress={atualizarESP}
-    style={{
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}
-  >
-    <Image
-      source={require('../assets/images/Atualizar.png')}
-      style={{ width: 350, height: 200, position:'absolute', marginTop:650}}
-      resizeMode='contain'
-    />
-  </TouchableOpacity>
-
-
-
-
-
-
-</View>
- </View>
-</View>
-</View>
-</View>
-  
-</ImageBackground>
-    </View>
-    </View>
-     
-    
-  
-  )
-}
+botaoAtualizarContainer: {
+  position: 'absolute',
+  bottom: 24,
+  alignSelf: 'center',
+},
+});
