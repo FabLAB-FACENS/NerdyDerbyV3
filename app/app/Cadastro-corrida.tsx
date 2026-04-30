@@ -52,7 +52,7 @@ export default function Settings() {
 {/* BOTÃO ATUALIZAR — centro inferior */}
 <View style={styles.botaoAtualizarContainer}>
   <TouchableOpacity 
-  onPress={() => router.push('../circuitos.tsx')}
+  onPress={() => router.push('../circuito.tsx')}
   >
   
     <Image
