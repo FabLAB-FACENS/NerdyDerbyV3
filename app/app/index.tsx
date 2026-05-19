@@ -1,31 +1,25 @@
 import { router, usePathname, Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { View, ImageBackground, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, ImageBackground, TouchableOpacity, StyleSheet, useWindowDimensions, Image } from 'react-native';
 
 import LogoNerdyDerby from '../assets/images/Logo_Nerdy_Derby.svg';
 import LogoFabLab from '../assets/images/Logo_Fab_LAB_Uni_Facens.svg';
-import BotaoConfig from '../assets/images/botaoconfig.svg';
-import BotaoCircuitos from '../assets/images/botaocircuitos.svg';
-
 
 export default function Home() {
   const [menuLevel, setMenuLevel] = useState(0);
   const pathname = usePathname();
   const { width } = useWindowDimensions();
- 
 
-  const logoSize   = width * 0.25;
-  const btnSize    = width *0.17; 
-  const fabLabW    = width * 0.10;
-  const fabLabH    = fabLabW * 0.3;
-
+  const logoSize = width * 0.25;
+  const btnSize  = width * 0.17;
+  const fabLabW  = width * 0.10;
+  const fabLabH  = fabLabW * 0.3;
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         router.back();
       }
-
       if (pathname === '/') {
         if (event.key === '1') {
           if (menuLevel === 0) {
@@ -34,7 +28,7 @@ export default function Home() {
             setMenuLevel(0);
           }
         } else if (event.key === '2') {
-          router.push('../Cadastro-corrida');
+          router.push('../circuito');
         }
       }
     };
@@ -63,14 +57,22 @@ export default function Home() {
             onPress={() => router.push('../settings')}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <BotaoConfig width={btnSize} height={btnSize} />
+            <Image
+              source={require('../assets/images/botaoconfiguracao.png')}
+              style={{ width: btnSize, height: btnSize }}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => router.push('../Cadastro-corrida')}
+            onPress={() => router.push('../circuito')}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <BotaoCircuitos width={btnSize} height={btnSize} />
+            <Image
+              source={require('../assets/images/Botao__Circuitos.png')}
+              style={{ width: btnSize, height: btnSize }}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
         </View>
 
